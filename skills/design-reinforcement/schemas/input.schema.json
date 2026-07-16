@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "input.schema.json",
+  "title": "DesignReinforcementInput",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["product_brief", "research_artifact", "creative_evidence", "target_assets"],
+  "properties": {
+    "product_brief": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product_id", "status", "version", "confirmed_at", "confirmed_hash", "product_name", "audience", "product_form", "pain_points", "selling_points"],
+      "properties": {
+        "product_id": { "type": "string", "minLength": 1 },
+        "status": { "const": "confirmed" },
+        "version": { "type": "integer", "minimum": 1 },
+        "confirmed_at": { "type": "string", "format": "date-time" },
+        "confirmed_hash": { "type": "string", "minLength": 1 },
+        "product_name": { "type": "string", "minLength": 1 },
+        "audience": { "type": "string", "minLength": 1 },
+        "product_form": { "type": "string", "minLength": 1 },
+        "pain_points": { "type": "array", "minItems": 1, "maxItems": 5, "items": { "type": "string" } },
+        "selling_points": { "type": "array", "minItems": 1, "maxItems": 5, "items": { "type": "string" } },
+        "target_price": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "research_artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["research_id", "topic", "query", "design_goal", "hypotheses", "created_at"],
+      "properties": {
+        "research_id": { "type": "string", "minLength": 1 },
+        "topic": { "type": "string", "minLength": 1 },
+        "query": { "type": "string", "minLength": 1 },
+        "design_goal": { "type": "string", "minLength": 1 },
+        "hypotheses": { "type": "array", "items": { "type": "string" } },
+        "created_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "creative_evidence": { "$ref": "creative-evidence.schema.json" },
+    "target_assets": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["landing_page", "kickstarter_page", "product_images", "tiktok_creatives", "brand_identity", "influencer_kit"] }
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "markets": { "type": "array", "items": { "type": "string" } },
+        "platforms": { "type": "array", "items": { "type": "string" } },
+        "brand_maturity": { "enum": ["new", "existing"] },
+        "production_budget": { "enum": ["low", "medium", "high"] },
+        "forbidden_styles": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

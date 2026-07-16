@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "design-direction.schema.json",
+  "title": "DesignDirection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["direction_id", "name", "strategy", "core_idea", "target_emotion", "visual_keywords", "reference_evidence_ids", "source_pattern_ids", "layout_rules", "image_rules", "copy_rules", "motion_rules", "differentiation_statement", "risks"],
+  "properties": {
+    "direction_id": { "type": "string", "pattern": "^direction_" },
+    "name": { "type": "string", "minLength": 1 },
+    "strategy": { "enum": ["validated", "differentiated", "experimental"] },
+    "core_idea": { "type": "string", "minLength": 1 },
+    "target_emotion": { "type": "string", "minLength": 1 },
+    "visual_keywords": { "type": "array", "items": { "type": "string" } },
+    "reference_evidence_ids": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^ev_" } },
+    "source_pattern_ids": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^pattern_" } },
+    "layout_rules": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "image_rules": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "copy_rules": { "type": "array", "items": { "type": "string" } },
+    "motion_rules": { "type": "array", "items": { "type": "string" } },
+    "differentiation_statement": { "type": "string", "minLength": 1 },
+    "risks": { "type": "array", "items": { "type": "string" } }
+  }
+}

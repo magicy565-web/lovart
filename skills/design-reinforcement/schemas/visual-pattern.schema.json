@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "visual-pattern.schema.json",
+  "title": "VisualPattern",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["pattern_id", "kind", "name", "description", "applies_to", "evidence_ids", "prevalence_score", "performance_score", "product_fit_score", "freshness_score", "feasibility_score", "pattern_score", "use_recommendation", "rationale"],
+  "properties": {
+    "pattern_id": { "type": "string", "pattern": "^pattern_" },
+    "kind": { "enum": ["category_rule", "growth_pattern", "saturated_pattern", "opportunity_pattern", "avoid"] },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "applies_to": { "type": "array", "items": { "type": "string" } },
+    "evidence_ids": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^ev_" } },
+    "prevalence_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "performance_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "product_fit_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "freshness_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "feasibility_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "pattern_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "use_recommendation": { "enum": ["adopt", "adapt", "experiment", "avoid"] },
+    "rationale": { "type": "string", "minLength": 1 }
+  }
+}

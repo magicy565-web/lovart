@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Reinforcement"
+  short_description: "Compile market evidence into traceable design directions"
+  default_prompt: "Use $design-reinforcement to compile TikTok competitor evidence into three original, evidence-grounded design directions."

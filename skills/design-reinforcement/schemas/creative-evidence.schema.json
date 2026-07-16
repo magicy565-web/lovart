@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "creative-evidence.schema.json",
+  "title": "CompetitiveCreativeBundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["bundle_id", "platform", "evidence", "actor_run_id", "dataset_id", "created_at", "warnings"],
+  "properties": {
+    "bundle_id": { "type": "string", "minLength": 1 },
+    "platform": { "const": "tiktok" },
+    "actor_run_id": { "type": "string", "minLength": 1 },
+    "dataset_id": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "evidence": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 20,
+      "items": { "$ref": "#/$defs/evidence" }
+    }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_id", "competitor_name", "source_url", "platform", "title", "media", "collection_context"],
+      "properties": {
+        "evidence_id": { "type": "string", "pattern": "^ev_" },
+        "competitor_name": { "type": "string", "minLength": 1 },
+        "source_url": { "type": "string", "format": "uri" },
+        "platform": { "const": "tiktok" },
+        "title": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "media": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["image_urls"],
+          "properties": {
+            "video_url": { "type": "string", "format": "uri" },
+            "image_urls": { "type": "array", "maxItems": 5, "items": { "type": "string", "format": "uri" } },
+            "cover_image": { "type": "string", "format": "uri" },
+            "sampled_frames": { "type": "array", "maxItems": 5, "items": { "type": "string", "format": "uri" } }
+          }
+        },
+        "performance_signals": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "views": { "type": "number", "minimum": 0 },
+            "likes": { "type": "number", "minimum": 0 },
+            "comments": { "type": "number", "minimum": 0 },
+            "shares": { "type": "number", "minimum": 0 },
+            "posted_at": { "type": "string", "format": "date-time" }
+          }
+        },
+        "commercial_signals": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "price": { "type": "number", "minimum": 0 },
+            "price_label": { "type": "string" },
+            "discount": { "type": "string" },
+            "cta": { "type": "string" },
+            "sold_count": { "type": "number", "minimum": 0 },
+            "review_count": { "type": "number", "minimum": 0 },
+            "rating": { "type": "number", "minimum": 0, "maximum": 5 }
+          }
+        },
+        "collection_context": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["search_query", "collected_at", "actor_run_id", "dataset_id"],
+          "properties": {
+            "search_query": { "type": "string" },
+            "collected_at": { "type": "string", "format": "date-time" },
+            "actor_run_id": { "type": "string", "minLength": 1 },
+            "dataset_id": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    }
+  }
+}

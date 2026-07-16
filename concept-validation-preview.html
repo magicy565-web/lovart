@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>启物 · Concept Validation 界面预览</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #1a221c;
+    --ink-soft: #4a564e;
+    --paper: #f3f5f2;
+    --card: #ffffff;
+    --line: rgba(26, 34, 28, 0.1);
+    --teal: #1f7f73;
+    --teal-deep: #17675e;
+    --amber: #c9892d;
+    --amber-soft: #f5e8d0;
+    --emerald: #1f7a4d;
+    --flame: #d45a2a;
+    --danger: #b42318;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --sans: "IBM Plex Sans", system-ui, sans-serif;
+    --serif: "Instrument Serif", Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    background:
+      radial-gradient(ellipse 80% 50% at 10% -10%, rgba(31,127,115,.12), transparent 50%),
+      radial-gradient(ellipse 60% 40% at 100% 0%, rgba(196,137,45,.08), transparent 45%),
+      var(--paper);
+  }
+  .shell {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 20px 64px;
+  }
+  .top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    line-height: 1.1;
+    margin: 6px 0 0;
+    letter-spacing: -0.02em;
+  }
+  h1 em { font-style: italic; color: var(--teal-deep); }
+  .lede {
+    max-width: 36rem;
+    margin: 10px 0 0;
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 4px;
+    background: rgba(255,255,255,.7);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
+  }
+  .tab {
+    border: 0;
+    background: transparent;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    padding: 9px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: .15s ease;
+  }
+  .tab:hover { color: var(--ink); background: rgba(0,0,0,.04); }
+  .tab[aria-selected="true"] {
+    background: var(--ink);
+    color: #fff;
+  }
+  .tab:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+  .stage {
+    display: none;
+    animation: rise .28s ease;
+  }
+  .stage.active { display: block; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stage { animation: none; }
+  }
+  .note {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .note strong { color: var(--ink); font-weight: 600; }
+
+  /* ===== Decision Room ===== */
+  .room {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #f4f6f4;
+    box-shadow: 0 24px 60px rgba(26,34,28,.08);
+  }
+  .room-head {
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .room-head h2 {
+    margin: 4px 0 0;
+    font-size: 1.35rem;
+    font-weight: 600;
+  }
+  .score-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--line);
+    background: #f7f7f4;
+    border-radius: 10px;
+    padding: 8px 12px;
+  }
+  .score-pill .n {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .room-body {
+    display: grid;
+    grid-template-columns: 1.4fr .85fr;
+    gap: 16px;
+    padding: 18px;
+  }
+  @media (max-width: 860px) {
+    .room-body { grid-template-columns: 1fr; }
+  }
+  .routes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 720px) {
+    .routes { grid-template-columns: 1fr; }
+  }
+  .route {
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+    cursor: pointer;
+    transition: .15s ease;
+  }
+  .route:hover { border-color: rgba(31,127,115,.35); }
+  .route.on {
+    border-color: var(--teal);
+    background: #f0faf7;
+    box-shadow: inset 0 0 0 1px rgba(31,127,115,.2);
+  }
+  .route .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--teal);
+    border-radius: 999px;
+    padding: 2px 8px;
+  }
+  .route.b .badge { background: #2b6cb0; }
+  .route.c .badge { background: #c05621; }
+  .route h3 { margin: 10px 0 6px; font-size: 14px; }
+  .route p { margin: 0; font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+  .locks {
+    margin-top: 14px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .locks h3 { margin: 0 0 10px; font-size: 13px; }
+  .lock-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .lock {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px;
+    background: #fafbfa;
+  }
+  .lock label {
+    display: block;
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+  }
+  .lock strong { font-size: 13px; font-weight: 600; }
+  .aside {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+    height: fit-content;
+  }
+  .aside-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .status {
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 4px 8px;
+  }
+  .status.yellow { background: #fef3c7; color: #92400e; }
+  .status.green { background: #d1fae5; color: #065f46; }
+  .gauge {
+    margin: 14px 0;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+  .ring {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background:
+      conic-gradient(var(--amber) 0 62%, #eef0ec 0);
+    display: grid;
+    place-items: center;
+  }
+  .ring > span {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .metric {
+    border: 1px solid var(--line);
+    background: #f7f8f6;
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .metric .v {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .metric .k {
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+  .leads {
+    margin-top: 12px;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+  }
+  .leads h4 {
+    margin: 0 0 8px;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .lead {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 11px;
+    padding: 5px 0;
+    border-bottom: 1px dashed rgba(0,0,0,.06);
+  }
+  .lead code {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: #334;
+  }
+  .lead span { color: var(--ink-soft); white-space: nowrap; }
+  .share {
+    background: #ecfdf5;
+    border-top: 1px solid #a7f3d0;
+    padding: 14px 18px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .share .title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #065f46;
+  }
+  .share .url {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: rgba(6,95,70,.75);
+    margin-top: 4px;
+    word-break: break-all;
+  }
+  .share .meta {
+    font-size: 11px;
+    color: rgba(6,95,70,.6);
+    margin-top: 3px;
+  }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .btn {
+    border: 0;
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 14px;
+    cursor: pointer;
+    transition: .15s ease;
+  }
+  .btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+  .btn.primary { background: var(--teal); color: #fff; }
+  .btn.primary:hover { background: var(--teal-deep); }
+  .btn.ghost {
+    background: #fff;
+    border: 1px solid #6ee7b7;
+    color: #065f46;
+  }
+  .btn.ghost:hover { background: #d1fae5; }
+  .btn.dark { background: var(--ink); color: #fff; }
+  .btn.outline {
+    background: #fff;
+    border: 1px solid var(--line);
+    color: var(--ink);
+  }
+  .foot {
+    background: #fff;
+    border-top: 1px solid var(--line);
+    padding: 12px 18px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+  }
+  .foot .hint { font-size: 12px; color: var(--ink-soft); }
+  .toast {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: #fff;
+    font-size: 13px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    opacity: 0;
+    pointer-events: none;
+    transition: .25s ease;
+    z-index: 50;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ===== Artifact Panel ===== */
+  .studio {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    min-height: 560px;
+    background: #fff;
+    box-shadow: 0 24px 60px rgba(26,34,28,.08);
+  }
+  @media (max-width: 860px) {
+    .studio { grid-template-columns: 1fr; }
+  }
+  .canvas-fake {
+    background:
+      linear-gradient(135deg, #faf9f6, #eef2ef 40%, #f6f1ea);
+    border-right: 1px solid var(--line);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 520px;
+  }
+  .node {
+    width: min(280px, 100%);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.04);
+  }
+  .node + .node { margin-top: 12px; margin-left: 28px; }
+  .node .t { font-size: 11px; color: var(--ink-soft); }
+  .node .n { font-size: 14px; font-weight: 600; margin-top: 4px; }
+  .panel {
+    display: flex;
+    flex-direction: column;
+    background: #fcfcfb;
+  }
+  .panel-head {
+    padding: 14px 14px 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .panel-head .title {
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .panel-head .sub {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+  .bar {
+    margin-top: 10px;
+    height: 6px;
+    background: #eceeea;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .bar > i {
+    display: block;
+    height: 100%;
+    width: 43%;
+    background: var(--flame);
+  }
+  .ready-line {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--emerald);
+    line-height: 1.4;
+  }
+  .signal-box {
+    margin-top: 10px;
+    border: 1px solid var(--line);
+    background: #f4f5f3;
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .signal-box .row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--ink-soft);
+  }
+  .sig-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin-top: 6px;
+  }
+  .sig {
+    background: #fff;
+    border-radius: 6px;
+    text-align: center;
+    padding: 6px 2px;
+  }
+  .sig .v {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .sig .k {
+    font-size: 9px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+  .sig-hint {
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--emerald);
+    line-height: 1.4;
+  }
+  .lead-list {
+    margin-top: 8px;
+    border-top: 1px solid rgba(0,0,0,.06);
+    padding-top: 8px;
+  }
+  .lead-list .cap {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--ink-soft);
+  }
+  .lead-list li {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    font-size: 10px;
+    padding: 4px 0;
+  }
+  .lead-list ul { margin: 4px 0 0; padding: 0; }
+  .lead-list code { font-family: var(--mono); }
+  .stages {
+    flex: 1;
+    overflow: auto;
+    padding: 4px 0;
+  }
+  .stage-item {
+    display: flex;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .dot.ok { background: #059669; }
+  .dot.wait { border: 2px solid var(--flame); background: transparent; }
+  .dot.lock { background: #d1d5db; }
+  .stage-item h4 {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .stage-item p {
+    margin: 4px 0 0;
+    font-size: 11px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .stage-item .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .mini {
+    font-size: 11px;
+    padding: 5px 8px;
+    border-radius: 6px;
+  }
+  .panel-foot {
+    border-top: 1px solid var(--line);
+    padding: 12px;
+  }
+  .panel-foot .path {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+
+  /* ===== Public page ===== */
+  .public {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #2a2f2c;
+    background: #0f1210;
+    color: #e8ebe7;
+    box-shadow: 0 24px 60px rgba(0,0,0,.25);
+  }
+  .pub-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 18px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    background: rgba(15,18,16,.9);
+  }
+  .pub-nav .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .mark {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    background: linear-gradient(135deg, var(--teal), #8fd0c4);
+  }
+  .chip {
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 4px 10px;
+  }
+  .chip.demo { background: rgba(251,191,36,.15); color: #fcd34d; }
+  .hero {
+    position: relative;
+    min-height: 280px;
+    padding: 48px 24px 36px;
+    background:
+      linear-gradient(to top, rgba(0,0,0,.85), rgba(0,0,0,.25)),
+      radial-gradient(circle at 70% 30%, #3d5a4a, #1a2420 55%, #0c100e);
+  }
+  .hero h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    line-height: 1.1;
+    margin: 0;
+    max-width: 14ch;
+  }
+  .hero p {
+    margin: 12px 0 0;
+    max-width: 36rem;
+    color: rgba(255,255,255,.72);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .banner {
+    margin: 0 18px;
+    margin-top: -14px;
+    position: relative;
+    border: 1px solid rgba(251,191,36,.25);
+    background: rgba(251,191,36,.1);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #fde68a;
+  }
+  .readiness {
+    margin: 22px 18px 28px;
+    background: #171b18;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  .readiness .rh {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+  .readiness h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.5rem;
+    margin: 6px 0 0;
+  }
+  .readiness .sub {
+    margin-top: 6px;
+    font-size: 11px;
+    color: rgba(255,255,255,.5);
+    max-width: 36rem;
+    line-height: 1.5;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 16px;
+  }
+  @media (max-width: 640px) {
+    .cards { grid-template-columns: 1fr; }
+  }
+  .card {
+    border: 1px solid rgba(255,255,255,.08);
+    background: #0f1210;
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .card .l { font-size: 11px; color: rgba(255,255,255,.45); margin-top: 10px; }
+  .card .v { font-size: 13px; font-weight: 600; margin-top: 4px; }
+  .ev-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  @media (max-width: 640px) {
+    .ev-grid { grid-template-columns: 1fr; }
+  }
+  .ev {
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.03);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .ev .top {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    align-items: flex-start;
+    margin: 0;
+  }
+  .ev .top strong { font-size: 13px; font-weight: 600; }
+  .pill {
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 2px 8px;
+    white-space: nowrap;
+  }
+  .pill.ok { background: rgba(52,211,153,.12); color: #6ee7b7; }
+  .pill.warn { background: rgba(251,191,36,.12); color: #fcd34d; }
+  .ev .meta {
+    margin-top: 6px;
+    font-size: 11px;
+    color: rgba(255,255,255,.45);
+    line-height: 1.45;
+  }
+  .next {
+    margin-top: 16px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    padding-top: 14px;
+  }
+  .next h4 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .next ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 14px;
+  }
+  @media (max-width: 640px) {
+    .next ol { grid-template-columns: 1fr; }
+  }
+  .next li {
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    color: rgba(255,255,255,.65);
+    line-height: 1.5;
+  }
+  .next li i {
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 10px;
+    color: rgba(255,255,255,.35);
+    margin-top: 2px;
+  }
+  .tiers {
+    padding: 8px 18px 28px;
+  }
+  .tiers h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    text-align: center;
+    font-size: 1.6rem;
+    margin: 0;
+  }
+  .tiers .desc {
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255,255,255,.5);
+    margin: 8px 0 16px;
+  }
+  .tier-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 720px) {
+    .tier-grid { grid-template-columns: 1fr; }
+  }
+  .tier {
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 12px;
+    padding: 14px;
+    background: #171b18;
+  }
+  .tier.hot {
+    border-color: rgba(31,127,115,.5);
+    box-shadow: inset 0 0 0 1px rgba(31,127,115,.25);
+  }
+  .tier .name { font-size: 13px; font-weight: 600; }
+  .tier .price {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+  .tier .price small {
+    font-size: 12px;
+    color: rgba(255,255,255,.45);
+    font-weight: 400;
+  }
+  .tier button {
+    width: 100%;
+    margin-top: 12px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--teal);
+    color: #fff;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 9px;
+    cursor: pointer;
+  }
+  .tier button:hover { background: var(--teal-deep); }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <div class="top">
+      <div>
+        <div class="eyebrow">启物 · Concept Validation</div>
+        <h1>从定案到可分享验证页，<em>一眼看完</em></h1>
+        <p class="lede">这是本轮主线 UI 的可点击预览：定案室一键发布与分享、产物面板信号与脱敏意向、公开页证据诚实展示。数据为演示态，交互可点。</p>
+      </div>
+      <div class="tabs" role="tablist" aria-label="预览界面">
+        <button class="tab" role="tab" aria-selected="true" data-tab="room">01 定案室</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="panel">02 产物面板</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="public">03 公开验证页</button>
+      </div>
+    </div>
+
+    <!-- ROOM -->
+    <section class="stage active" id="stage-room" role="tabpanel">
+      <div class="room">
+        <header class="room-head">
+          <div>
+            <div class="eyebrow">Campaign Decision Room</div>
+            <h2>众筹立项与产品定案</h2>
+            <p style="margin:6px 0 0;font-size:12px;color:var(--ink-soft)">先比较路线，再锁定产品、用户、故事、Offer、证明和交付边界。</p>
+          </div>
+          <div class="score-pill">
+            <div>
+              <div style="font-size:10px;color:var(--ink-soft)">当前可信度</div>
+              <div class="n">62<span style="font-size:11px;color:var(--ink-soft)">/100</span></div>
+            </div>
+          </div>
+        </header>
+        <div class="room-body">
+          <div>
+            <div class="routes">
+              <div class="route on" data-route="a">
+                <span class="badge">路线 A</span>
+                <h3>通勤极简挎包</h3>
+                <p>强调 13" 笔记本 + 快取口袋，众筹价压在 ¥299 内。</p>
+              </div>
+              <div class="route" data-route="b">
+                <span class="badge">路线 B</span>
+                <h3>模块化城市包</h3>
+                <p>可拆卸侧袋与扩容，故事更强但成本更高。</p>
+              </div>
+              <div class="route c" data-route="c">
+                <span class="badge">路线 C</span>
+                <h3>轻户外一日包</h3>
+                <p>防泼水面料 + 胸扣，受众更窄、验证更聚焦。</p>
+              </div>
+            </div>
+            <div class="locks">
+              <h3>六项锁定（节选）</h3>
+              <div class="lock-grid">
+                <div class="lock"><label>工作名</label><strong>Arc Daypack</strong></div>
+                <div class="lock"><label>首发版本</label><strong>v1 · 13L 通勤</strong></div>
+                <div class="lock"><label>核心用户</label><strong>地铁通勤的独立工作者</strong></div>
+                <div class="lock"><label>早鸟 / 众筹 / 零售</label><strong>¥249 / ¥299 / ¥399</strong></div>
+                <div class="lock"><label>产品阶段</label><strong>概念 · 待样机</strong></div>
+                <div class="lock"><label>供应商</label><strong>已有候选</strong></div>
+              </div>
+            </div>
+          </div>
+          <aside class="aside">
+            <div class="aside-top">
+              <div>
+                <div class="eyebrow">Readiness Gate</div>
+                <div style="font-weight:600;margin-top:4px">进入销售工坊</div>
+              </div>
+              <span class="status yellow">黄色 · 概念验证</span>
+            </div>
+            <div class="gauge">
+              <div class="ring"><span>62</span></div>
+              <div>
+                <div style="font-size:11px;color:var(--ink-soft)">发布模式</div>
+                <div style="font-weight:600;margin-top:2px">概念验证</div>
+                <div style="font-size:11px;color:var(--ink-soft);margin-top:4px;line-height:1.45">可制作测试页，只能进行非绑定预约。</div>
+              </div>
+            </div>
+            <div style="font-size:12px;font-weight:600">验证信号实时</div>
+            <div class="metrics">
+              <div class="metric"><div class="v" id="m-visit">128</div><div class="k">访问</div></div>
+              <div class="metric"><div class="v" id="m-cta">34</div><div class="k">CTA</div></div>
+              <div class="metric"><div class="v" id="m-email">11</div><div class="k">留资</div></div>
+              <div class="metric"><div class="v" id="m-bird">6</div><div class="k">早鸟</div></div>
+            </div>
+            <div class="leads">
+              <h4>最近意向（脱敏）</h4>
+              <div class="lead"><code>li******@gmail.com</code><span>早鸟 · ¥249</span></div>
+              <div class="lead"><code>ch***@outlook.com</code><span>留资</span></div>
+              <div class="lead"><code>wa****@qq.com</code><span>标准档 · ¥299</span></div>
+            </div>
+          </aside>
+        </div>
+        <div class="share" id="share-bar">
+          <div>
+            <div class="title">概念验证页已可分享</div>
+            <div class="url" id="share-url">https://qiwu.app/campaign/arc-daypack-x7k2</div>
+            <div class="meta">v2 · 概念验证 · 预约不收费 · 访问 128 · 意向 17</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn ghost" id="btn-copy">复制链接</button>
+            <button class="btn primary" id="btn-open">打开公开页</button>
+          </div>
+        </div>
+        <footer class="foot">
+          <div class="hint" id="room-hint">可先保存草稿；或直接批准定案并发布不收费的概念验证页。</div>
+          <div class="btn-row">
+            <button class="btn outline" id="btn-save">仅保存</button>
+            <button class="btn primary" id="btn-publish">更新并重新发布</button>
+          </div>
+        </footer>
+      </div>
+      <p class="note"><strong>对应实现：</strong>定案室底部「批准并发布概念页」→ 分享条（复制/打开）→ 侧栏实时信号与脱敏名单。</p>
+    </section>
+
+    <!-- PANEL -->
+    <section class="stage" id="stage-panel" role="tabpanel">
+      <div class="studio">
+        <div class="canvas-fake">
+          <div>
+            <div class="eyebrow">Studio Canvas</div>
+            <div style="font-family:var(--serif);font-size:1.6rem;margin-top:6px">Arc Daypack</div>
+            <p style="font-size:13px;color:var(--ink-soft);margin:8px 0 0;max-width:28rem;line-height:1.55">画布上是流水线节点；右侧产物面板是创作者真正的「控制台」。</p>
+          </div>
+          <div>
+            <div class="node"><div class="t">1 · Brief</div><div class="n">已批准</div></div>
+            <div class="node"><div class="t">2 · Research</div><div class="n">已批准</div></div>
+            <div class="node" style="border-color:rgba(212,90,42,.35)"><div class="t">3 · Campaign Foundation</div><div class="n">已批准 · 可发布概念页</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <div class="title">商业化产物链</div>
+            <div class="sub">每个阶段都需要你的明确批准</div>
+            <div class="bar"><i></i></div>
+            <div class="ready-line">概念验证路径已就绪：可发布 demo 页（预约不收费）。</div>
+            <div class="signal-box">
+              <div class="row"><span>概念验证信号</span><span style="font-family:var(--mono)">意向 17</span></div>
+              <div class="sig-grid">
+                <div class="sig"><div class="v">128</div><div class="k">访问</div></div>
+                <div class="sig"><div class="v">34</div><div class="k">CTA</div></div>
+                <div class="sig"><div class="v">11</div><div class="k">留资</div></div>
+                <div class="sig"><div class="v">6</div><div class="k">早鸟预约</div></div>
+              </div>
+              <div class="sig-hint">已有意向信号，可继续补证据或推进正式发布。</div>
+              <div class="lead-list">
+                <div class="cap">最近意向（邮箱已脱敏）</div>
+                <ul>
+                  <li><code>li******@gmail.com</code><span>早鸟</span></li>
+                  <li><code>ch***@outlook.com</code><span>留资</span></li>
+                  <li><code>wa****@qq.com</code><span>标准档</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="stages">
+            <div class="stage-item">
+              <div class="dot ok"></div>
+              <div>
+                <h4>1. 产品 Brief</h4>
+                <p>Arc Daypack · 为地铁通勤重新设计的 13L 日用包</p>
+              </div>
+            </div>
+            <div class="stage-item">
+              <div class="dot ok"></div>
+              <div>
+                <h4>2. 市场研究</h4>
+                <p>通勤快取场景仍有空白，价格敏感带在 ¥250–350</p>
+              </div>
+            </div>
+            <div class="stage-item">
+              <div class="dot ok"></div>
+              <div>
+                <h4>3. Campaign Foundation</h4>
+                <p>Arc Daypack · 概念验证 · 62/100</p>
+                <div class="actions">
+                  <button class="btn outline mini" id="btn-open-room">打开项目定案室</button>
+                </div>
+              </div>
+            </div>
+            <div class="stage-item">
+              <div class="dot lock"></div>
+              <div>
+                <h4>4–7. 视觉 / 页面 / 验证 / 发布包</h4>
+                <p>概念路径可不跑完；正式 live 仍需全链 + 证据门禁</p>
+              </div>
+            </div>
+          </div>
+          <div class="panel-foot">
+            <div class="btn-row" style="width:100%">
+              <button class="btn outline mini" style="flex:1" id="btn-view-public">查看公开版 v2</button>
+              <button class="btn outline mini" id="btn-copy-panel">复制</button>
+            </div>
+            <div class="path">/campaign/arc-daypack-x7k2 · 概念验证</div>
+            <button class="btn dark" style="width:100%;margin-top:10px" id="btn-republish">更新概念验证页</button>
+          </div>
+        </div>
+      </div>
+      <p class="note"><strong>对应实现：</strong>ArtifactPanel 顶部信号四格 + 脱敏名单；底部复制链接与路径提示。</p>
+    </section>
+
+    <!-- PUBLIC -->
+    <section class="stage" id="stage-public" role="tabpanel">
+      <div class="public">
+        <div class="pub-nav">
+          <div class="brand"><span class="mark"></span>启物众筹</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.4)">SNAPSHOT v2</span>
+            <span class="chip demo">概念验证中</span>
+          </div>
+        </div>
+        <div class="hero">
+          <h2>为地铁通勤重新设计的 13 升</h2>
+          <p>快取口袋、立式笔记本仓、单手开合。现在预约首发通知——不收费，随时可取消。</p>
+          <div style="margin-top:18px">
+            <button class="btn primary" id="btn-reserve">预约首发通知</button>
+          </div>
+        </div>
+        <div class="banner">
+          <strong>当前页面用于验证购买意向，不会收取费用。</strong>
+          页面中的性能、认证和交付信息仍可能是目标值。正式众筹前需要补齐可运行原型、成本与供应链证据。
+        </div>
+        <div class="readiness">
+          <div class="rh">
+            <div>
+              <div class="eyebrow" style="color:rgba(255,255,255,.4)">项目准备度</div>
+              <h3>哪些已经确定，哪些仍待证明</h3>
+              <div class="sub">当前为概念验证页：意向可预约但不收费。下列证据等级与待办对访客公开，避免把目标值当成已验证事实。</div>
+            </div>
+            <div style="text-align:right">
+              <span class="chip demo">CONDITIONAL · 概念验证</span>
+              <div style="font-family:var(--mono);font-size:22px;font-weight:600;margin-top:8px">62<span style="font-size:12px;color:rgba(255,255,255,.4)">/100</span></div>
+            </div>
+          </div>
+          <div class="cards">
+            <div class="card"><div style="opacity:.7">⚗</div><div class="l">产品阶段</div><div class="v">概念阶段</div></div>
+            <div class="card"><div style="opacity:.7">🏭</div><div class="l">供应链</div><div class="v">已有候选</div></div>
+            <div class="card"><div style="opacity:.7">✓</div><div class="l">已有证据</div><div class="v">1/5 项</div></div>
+          </div>
+          <div style="margin-top:16px;font-size:13px;font-weight:600">证据清单与等级</div>
+          <div class="ev-grid">
+            <div class="ev">
+              <div class="top"><strong>产品概念与视觉方向</strong><span class="pill ok">已具备</span></div>
+              <div class="meta">等级：生成概念 · 可用于表达外观方向，不能证明性能或量产准备度。</div>
+            </div>
+            <div class="ev">
+              <div class="top"><strong>可运行原型连续演示</strong><span class="pill warn">上线前必需</span></div>
+              <div class="meta">等级：样机照片 · 上线前拍摄三个核心功能的连续、未剪切演示。</div>
+            </div>
+            <div class="ev">
+              <div class="top"><strong>目标用户体验记录</strong><span class="pill warn">仍需补齐</span></div>
+              <div class="meta">等级：已验证数据 · 至少完成 5 名核心用户的任务测试与原话记录。</div>
+            </div>
+            <div class="ev">
+              <div class="top"><strong>供应商与核心工艺确认</strong><span class="pill warn">仍需补齐</span></div>
+              <div class="meta">等级：制造证据 · 记录供应商、MOQ、关键工艺和预计周期。</div>
+            </div>
+          </div>
+          <div class="next">
+            <h4>⚠ 上线前重点任务</h4>
+            <ol>
+              <li><i>01</i><span>完成可运行原型并拍摄连续演示</span></li>
+              <li><i>02</i><span>确认候选供应商、MOQ 与关键工艺</span></li>
+              <li><i>03</i><span>完成成本、运费和退款缓冲测算</span></li>
+              <li><i>04</i><span>补齐证据：目标用户体验记录</span></li>
+            </ol>
+          </div>
+        </div>
+        <div class="tiers">
+          <h3>选择你的支持档位</h3>
+          <p class="desc">这是非绑定预约，不会扣款；正式量产或众筹开始前可以随时取消</p>
+          <div class="tier-grid">
+            <div class="tier hot">
+              <div class="name">早鸟 · 创始支持者</div>
+              <div class="price">¥249 <small>限 100 名</small></div>
+              <button data-tier="早鸟">预约此档</button>
+            </div>
+            <div class="tier">
+              <div class="name">标准 · 首发版</div>
+              <div class="price">¥299</div>
+              <button data-tier="标准">预约此档</button>
+            </div>
+            <div class="tier">
+              <div class="name">双人套装</div>
+              <div class="price">¥549</div>
+              <button data-tier="双人">预约此档</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="note"><strong>对应实现：</strong>公开页 readiness 区展示 truthClass、证据状态、blockers 与编号 nextActions；demo 模式全程标注不收费。</p>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    const toast = document.getElementById("toast");
+    let toastTimer;
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    // Tabs
+    const tabs = document.querySelectorAll(".tab");
+    const stages = {
+      room: document.getElementById("stage-room"),
+      panel: document.getElementById("stage-panel"),
+      public: document.getElementById("stage-public"),
+    };
+    function go(name) {
+      tabs.forEach((t) => t.setAttribute("aria-selected", t.dataset.tab === name ? "true" : "false"));
+      Object.entries(stages).forEach(([k, el]) => el.classList.toggle("active", k === name));
+    }
+    tabs.forEach((t) => t.addEventListener("click", () => go(t.dataset.tab)));
+
+    // Routes
+    document.querySelectorAll(".route").forEach((r) => {
+      r.addEventListener("click", () => {
+        document.querySelectorAll(".route").forEach((x) => x.classList.remove("on"));
+        r.classList.add("on");
+        showToast("已选择：" + r.querySelector("h3").textContent);
+      });
+    });
+
+    // Share actions
+    document.getElementById("btn-copy").addEventListener("click", async () => {
+      const url = document.getElementById("share-url").textContent;
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast("链接已复制");
+      } catch {
+        showToast("请手动复制地址");
+      }
+    });
+    document.getElementById("btn-open").addEventListener("click", () => {
+      go("public");
+      showToast("已切换到公开验证页预览");
+    });
+    document.getElementById("btn-save").addEventListener("click", () => showToast("六项定案已保存（演示）"));
+    document.getElementById("btn-publish").addEventListener("click", () => {
+      // bump fake metrics
+      const ids = ["m-visit", "m-cta", "m-email", "m-bird"];
+      ids.forEach((id) => {
+        const el = document.getElementById(id);
+        el.textContent = String(Number(el.textContent) + (id === "m-visit" ? 3 : 1));
+      });
+      showToast("概念验证页已更新 v3");
+    });
+
+    document.getElementById("btn-open-room").addEventListener("click", () => {
+      go("room");
+      showToast("打开项目定案室");
+    });
+    document.getElementById("btn-view-public").addEventListener("click", () => go("public"));
+    document.getElementById("btn-copy-panel").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText("https://qiwu.app/campaign/arc-daypack-x7k2");
+        showToast("公开页链接已复制");
+      } catch {
+        showToast("请手动复制");
+      }
+    });
+    document.getElementById("btn-republish").addEventListener("click", () => showToast("已更新概念验证页（演示）"));
+    document.getElementById("btn-reserve").addEventListener("click", () => showToast("已记录意向 · 不收费"));
+    document.querySelectorAll("[data-tier]").forEach((b) => {
+      b.addEventListener("click", () => showToast("已预约「" + b.dataset.tier + "」· 不扣款"));
+    });
+  </script>
+</body>
+</html>

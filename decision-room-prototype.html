@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>启物 · 定案室</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070908;
+      --bg-2: #0d1210;
+      --line: rgba(255, 246, 232, 0.08);
+      --line-2: rgba(255, 246, 232, 0.14);
+      --text: #f6f0e4;
+      --text-2: rgba(246, 240, 228, 0.62);
+      --text-3: rgba(246, 240, 228, 0.34);
+      --flame: #ff6a35;
+      --flame-2: #ff8f5c;
+      --sage: #4ec9a8;
+      --amber: #f0b84a;
+      --rose: #ff6b6b;
+      --paper: #f4efe4;
+      --paper-ink: #141916;
+      --a: #3ecfad;
+      --b: #7aa2ff;
+      --c: #ff9a4a;
+      --font: "Noto Sans SC", system-ui, sans-serif;
+      --serif: "Noto Serif SC", "Instrument Serif", serif;
+      --display: "Instrument Serif", "Noto Serif SC", serif;
+      --mono: "JetBrains Mono", monospace;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    html, body { min-height: 100%; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 90% 55% at 50% -20%, rgba(255, 106, 53, 0.16), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 100% 40%, rgba(78, 201, 168, 0.07), transparent 50%),
+        radial-gradient(ellipse 40% 30% at 0% 80%, rgba(122, 162, 255, 0.06), transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    button { font: inherit; color: inherit; cursor: pointer; border: none; background: none; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--flame); outline-offset: 2px;
+    }
+    a { color: inherit; }
+
+    .stage {
+      position: relative;
+      z-index: 1;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 20px 20px 160px;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0 28px;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.84rem; color: var(--text-2); letter-spacing: 0.02em;
+    }
+    .nav-mark {
+      width: 26px; height: 26px; border-radius: 8px;
+      background: conic-gradient(from 210deg, var(--flame), var(--flame-2), #ffd0b8, var(--flame));
+      box-shadow: 0 0 28px rgba(255, 106, 53, 0.4);
+    }
+    .nav-meta {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--text-3);
+    }
+
+    /* ── Opening ── */
+    .opening {
+      display: grid;
+      grid-template-columns: 1.35fr 0.9fr;
+      gap: 40px;
+      align-items: end;
+      margin-bottom: 48px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--line);
+    }
+    @media (max-width: 840px) {
+      .opening { grid-template-columns: 1fr; gap: 28px; }
+    }
+    .opening .kicker {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--flame); margin-bottom: 18px;
+    }
+    .opening h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.4rem, 5.5vw, 3.8rem);
+      font-weight: 600;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      max-width: 11ch;
+    }
+    .opening h1 span {
+      display: block;
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      color: color-mix(in srgb, var(--text) 55%, var(--flame));
+      font-size: 0.82em;
+      margin-top: 0.12em;
+    }
+    .opening p.lede {
+      margin-top: 18px;
+      max-width: 36ch;
+      color: var(--text-2);
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.7;
+    }
+
+    /* Score orb in opening */
+    .orb {
+      justify-self: end;
+      width: min(100%, 280px);
+      aspect-ratio: 1;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+    @media (max-width: 840px) {
+      .orb { justify-self: start; width: 200px; }
+    }
+    .orb-ring {
+      position: absolute; inset: 0; border-radius: 50%;
+      border: 1px solid color-mix(in srgb, var(--tone, var(--amber)) 35%, transparent);
+      box-shadow:
+        0 0 60px color-mix(in srgb, var(--tone, var(--amber)) 18%, transparent),
+        inset 0 0 40px color-mix(in srgb, var(--tone, var(--amber)) 8%, transparent);
+    }
+    .orb-dash {
+      position: absolute; inset: -6px; border-radius: 50%;
+      border: 1px dashed color-mix(in srgb, var(--tone, var(--amber)) 28%, transparent);
+      animation: spin 40s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .orb-core {
+      text-align: center;
+      z-index: 1;
+    }
+    .orb-num {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: clamp(4rem, 8vw, 5.5rem);
+      line-height: 0.9;
+      letter-spacing: -0.04em;
+      color: var(--text);
+    }
+    .orb-num small {
+      font-family: var(--mono); font-style: normal;
+      font-size: 0.7rem; letter-spacing: 0.16em;
+      color: var(--text-3); display: block; margin-top: 8px;
+    }
+    .orb-label {
+      margin-top: 14px;
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      color: var(--tone, var(--amber));
+    }
+    .orb-mode {
+      margin-top: 6px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+    [data-status="go"] .orb { --tone: var(--sage); }
+    [data-status="conditional_go"] .orb { --tone: var(--amber); }
+    [data-status="blocked"] .orb { --tone: var(--rose); }
+
+    /* ── Section labels ── */
+    .sec-label {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .sec-label h2 {
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .sec-label .n {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--text-3);
+    }
+
+    /* ── Route gallery ── */
+    .routes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 900px) {
+      .routes { grid-template-columns: 1fr; }
+    }
+    .route {
+      position: relative;
+      text-align: left;
+      border-radius: 20px;
+      min-height: 340px;
+      padding: 22px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--line-2);
+      background: var(--bg-2);
+      transition: transform 0.25s cubic-bezier(0.2, 0.85, 0.25, 1), border-color 0.2s, box-shadow 0.25s;
+    }
+    .route::before {
+      content: "";
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 120% 80% at 20% 0%, color-mix(in srgb, var(--rc) 28%, transparent), transparent 55%),
+        linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.45) 100%);
+      pointer-events: none;
+    }
+    .route::after {
+      content: "";
+      position: absolute;
+      right: -20%; top: -10%;
+      width: 70%; height: 70%;
+      border-radius: 50%;
+      background: radial-gradient(circle, color-mix(in srgb, var(--rc) 22%, transparent), transparent 70%);
+      filter: blur(8px);
+      pointer-events: none;
+    }
+    .route > * { position: relative; z-index: 1; }
+    .route:hover {
+      transform: translateY(-4px) scale(1.01);
+      border-color: color-mix(in srgb, var(--rc) 50%, transparent);
+      box-shadow: 0 30px 50px -28px color-mix(in srgb, var(--rc) 55%, transparent);
+    }
+    .route[aria-pressed="true"] {
+      border-color: color-mix(in srgb, var(--rc) 75%, transparent);
+      box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--rc) 40%, transparent),
+        0 28px 50px -22px color-mix(in srgb, var(--rc) 60%, transparent);
+    }
+    .route-a { --rc: var(--a); }
+    .route-b { --rc: var(--b); }
+    .route-c { --rc: var(--c); }
+
+    .route-head {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+    }
+    .route-code {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 2.6rem;
+      line-height: 1;
+      color: var(--rc);
+      text-shadow: 0 0 40px color-mix(in srgb, var(--rc) 50%, transparent);
+    }
+    .route-check {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      display: grid; place-items: center;
+      color: transparent;
+      transition: 0.15s ease;
+    }
+    .route[aria-pressed="true"] .route-check {
+      background: var(--rc); border-color: var(--rc); color: #06110d;
+      box-shadow: 0 0 20px color-mix(in srgb, var(--rc) 50%, transparent);
+    }
+    .route-title {
+      margin-top: auto;
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .route-arch {
+      margin-top: 6px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--rc) 80%, white);
+      opacity: 0.85;
+    }
+    .route-thesis {
+      margin-top: 14px;
+      font-size: 0.88rem;
+      color: var(--text-2);
+      line-height: 1.65;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .route-meters {
+      display: flex; gap: 5px; margin-top: 18px;
+    }
+    .route-meters span {
+      flex: 1; height: 3px; border-radius: 99px;
+      background: rgba(255,255,255,0.1);
+    }
+    .route-meters span.on {
+      background: var(--rc);
+      box-shadow: 0 0 8px color-mix(in srgb, var(--rc) 60%, transparent);
+    }
+
+    .synth {
+      display: flex; gap: 10px; align-items: center;
+      margin-bottom: 52px;
+      padding: 8px 8px 8px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--line-2);
+      background: rgba(255,255,255,0.03);
+    }
+    @media (max-width: 640px) {
+      .synth { flex-direction: column; border-radius: 18px; padding: 12px; align-items: stretch; }
+    }
+    .synth input {
+      flex: 1; height: 40px; border: none; background: transparent;
+      color: var(--text); font-size: 0.9rem; outline: none;
+    }
+    .synth input::placeholder { color: var(--text-3); }
+    .synth .btn-go {
+      height: 42px; padding: 0 20px; border-radius: 999px;
+      background: linear-gradient(135deg, var(--flame-2), var(--flame));
+      color: #1a0a04; font-weight: 600; font-size: 0.88rem;
+      box-shadow: 0 10px 30px -10px rgba(255, 106, 53, 0.65);
+      white-space: nowrap;
+      transition: transform 0.12s, filter 0.15s;
+    }
+    .synth .btn-go:hover { filter: brightness(1.06); }
+    .synth .btn-go:active { transform: scale(0.98); }
+
+    /* ── Brief (the one-pager) ── */
+    .brief-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 22px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .brief-wrap { grid-template-columns: 1fr; }
+      .side { position: static !important; }
+    }
+
+    .brief {
+      background: var(--paper);
+      color: var(--paper-ink);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.06),
+        0 50px 100px -40px rgba(0,0,0,0.85);
+      position: relative;
+    }
+    .brief-hero {
+      padding: 36px 36px 28px;
+      background:
+        linear-gradient(135deg, #1a221e 0%, #0f1512 60%, #1c1410 100%);
+      color: var(--text);
+      position: relative;
+      overflow: hidden;
+    }
+    .brief-hero::after {
+      content: "";
+      position: absolute;
+      right: -40px; top: -40px;
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,106,53,0.35), transparent 70%);
+    }
+    .brief-hero .ph {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--flame-2); margin-bottom: 14px;
+      position: relative; z-index: 1;
+    }
+    .brief-hero h3 {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      max-width: 16ch;
+      position: relative; z-index: 1;
+    }
+    .brief-hero .tagline {
+      margin-top: 12px;
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 1.15rem;
+      color: rgba(246, 240, 228, 0.72);
+      max-width: 32ch;
+      line-height: 1.45;
+      position: relative; z-index: 1;
+    }
+    .brief-meta {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 22px;
+      position: relative; z-index: 1;
+    }
+    .pill {
+      font-size: 0.75rem;
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: rgba(246, 240, 228, 0.8);
+    }
+    .pill strong { color: #fff; font-weight: 600; }
+
+    .brief-body { padding: 8px 0 12px; }
+
+    .lock {
+      display: grid;
+      grid-template-columns: 72px 1fr auto;
+      gap: 8px 16px;
+      padding: 22px 32px;
+      border-top: 1px solid rgba(20, 25, 22, 0.08);
+      align-items: start;
+      cursor: pointer;
+      transition: background 0.15s;
+      text-align: left;
+      width: 100%;
+    }
+    .lock:first-child { border-top: none; }
+    .lock:hover { background: rgba(20, 25, 22, 0.03); }
+    .lock .idx {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 1.6rem;
+      color: rgba(20, 25, 22, 0.2);
+      line-height: 1;
+      padding-top: 2px;
+    }
+    .lock .who {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(20, 25, 22, 0.35);
+      margin-bottom: 4px;
+    }
+    .lock h4 {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+    .lock .summary {
+      font-size: 0.9rem;
+      color: rgba(20, 25, 22, 0.62);
+      line-height: 1.55;
+      max-width: 52ch;
+    }
+    .lock .summary em {
+      font-style: normal;
+      color: var(--paper-ink);
+      font-weight: 500;
+    }
+    .lock .edit-hint {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(20, 25, 22, 0.3);
+      padding-top: 6px;
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+    .lock:hover .edit-hint { color: var(--flame); }
+
+    /* Evidence as horizontal story chips */
+    .ev-row {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
+    }
+    .ev-chip {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid rgba(20, 25, 22, 0.1);
+      font-size: 0.78rem;
+      color: var(--paper-ink);
+    }
+    .ev-chip .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #bbb;
+    }
+    .ev-chip.ok .dot { background: #2f9b74; box-shadow: 0 0 0 3px rgba(47,155,116,0.15); }
+    .ev-chip.wait .dot { background: #d4a017; }
+    .ev-chip.miss .dot { background: #d45454; }
+    .ev-chip button {
+      font-size: 0.72rem;
+      color: rgba(20,25,22,0.45);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      margin-left: 2px;
+    }
+    .ev-chip button:hover { color: var(--flame); }
+
+    /* Side panel */
+    .side {
+      position: sticky;
+      top: 20px;
+      display: grid;
+      gap: 12px;
+    }
+    .side-card {
+      border-radius: 18px;
+      border: 1px solid var(--line-2);
+      background: rgba(255,255,255,0.03);
+      padding: 18px;
+      backdrop-filter: blur(10px);
+    }
+    .side-card h3 {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 12px;
+    }
+    .side-card ul {
+      list-style: none; padding: 0;
+      display: grid; gap: 10px;
+    }
+    .side-card li {
+      font-size: 0.84rem;
+      color: var(--text-2);
+      line-height: 1.45;
+      padding-left: 14px;
+      position: relative;
+    }
+    .side-card li::before {
+      content: "";
+      position: absolute; left: 0; top: 0.55em;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--text-3);
+    }
+    .side-card.blockers li::before { background: var(--rose); box-shadow: 0 0 8px var(--rose); }
+    .side-card.next li::before { background: var(--sage); box-shadow: 0 0 8px var(--sage); }
+    .side-card .empty {
+      font-size: 0.84rem; color: var(--text-3); font-style: italic;
+    }
+    .palette {
+      display: flex; gap: 6px; margin-top: 4px;
+    }
+    .palette i {
+      width: 28px; height: 28px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15);
+    }
+
+    /* ── Dock ── */
+    .dock {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+      padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, transparent, rgba(7,9,8,0.92) 35%);
+      backdrop-filter: blur(12px);
+    }
+    .dock-inner {
+      max-width: 1180px; margin: 0 auto;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 10px 10px 10px 20px;
+      border-radius: 999px;
+      border: 1px solid var(--line-2);
+      background: rgba(13, 18, 16, 0.92);
+      box-shadow: 0 20px 50px -20px rgba(0,0,0,0.7);
+    }
+    @media (max-width: 640px) {
+      .dock-inner { border-radius: 20px; }
+    }
+    .dock-stat {
+      display: flex; align-items: baseline; gap: 10px;
+      font-size: 0.88rem; color: var(--text-2);
+    }
+    .dock-stat strong {
+      font-family: var(--display); font-style: italic;
+      font-size: 1.5rem; color: var(--text); font-weight: 400;
+    }
+    .dock-actions { display: flex; gap: 8px; }
+    .btn-quiet {
+      height: 46px; padding: 0 18px; border-radius: 999px;
+      color: var(--text-2); font-size: 0.88rem;
+      border: 1px solid transparent;
+    }
+    .btn-quiet:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .btn-seal {
+      height: 46px; padding: 0 24px; border-radius: 999px;
+      font-weight: 600; font-size: 0.9rem;
+      background: linear-gradient(135deg, var(--flame-2), var(--flame) 60%, #e04a1a);
+      color: #1a0804;
+      box-shadow:
+        0 12px 32px -10px rgba(255, 106, 53, 0.65),
+        inset 0 1px 0 rgba(255,255,255,0.3);
+      transition: transform 0.12s, filter 0.15s, opacity 0.15s;
+    }
+    .btn-seal:hover:not(:disabled) { filter: brightness(1.05); }
+    .btn-seal:active:not(:disabled) { transform: scale(0.98); }
+    .btn-seal:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
+
+    /* Share */
+    .share {
+      display: none;
+      margin-bottom: 28px;
+      padding: 16px 20px;
+      border-radius: 16px;
+      border: 1px solid rgba(78, 201, 168, 0.3);
+      background: linear-gradient(135deg, rgba(78,201,168,0.14), rgba(78,201,168,0.04));
+      align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      animation: up 0.35s ease;
+    }
+    .share.show { display: flex; }
+    @keyframes up {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: none; }
+    }
+    .share strong { color: #c8f5e6; }
+    .share .path {
+      font-family: var(--mono); font-size: 0.8rem;
+      padding: 4px 10px; border-radius: 8px;
+      background: rgba(0,0,0,0.3); color: #a8e8d4;
+    }
+    .share .btn-mini {
+      height: 36px; padding: 0 14px; border-radius: 999px;
+      font-size: 0.8rem; font-weight: 600;
+      background: var(--sage); color: #04140f;
+    }
+    .share .btn-ghost-mini {
+      height: 36px; padding: 0 14px; border-radius: 999px;
+      font-size: 0.8rem; color: #c8f5e6;
+      border: 1px solid rgba(78,201,168,0.3);
+    }
+
+    /* Drawer for editing */
+    .scrim {
+      position: fixed; inset: 0; z-index: 50;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .scrim.open { opacity: 1; pointer-events: auto; }
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; z-index: 51;
+      width: min(440px, 100%);
+      background: var(--paper);
+      color: var(--paper-ink);
+      transform: translateX(100%);
+      transition: transform 0.32s cubic-bezier(0.2, 0.85, 0.25, 1);
+      display: flex; flex-direction: column;
+      box-shadow: -30px 0 60px -30px rgba(0,0,0,0.6);
+    }
+    .drawer.open { transform: none; }
+    .drawer-hd {
+      padding: 24px 24px 16px;
+      border-bottom: 1px solid rgba(20,25,22,0.08);
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+    }
+    .drawer-hd .who {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(20,25,22,0.35); margin-bottom: 6px;
+    }
+    .drawer-hd h3 {
+      font-family: var(--serif); font-size: 1.35rem; font-weight: 600;
+    }
+    .drawer-x {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: rgba(20,25,22,0.06);
+      font-size: 1.1rem; color: rgba(20,25,22,0.5);
+    }
+    .drawer-x:hover { background: rgba(20,25,22,0.1); }
+    .drawer-bd {
+      flex: 1; overflow: auto; padding: 20px 24px 24px;
+      display: grid; gap: 14px;
+    }
+    .drawer-bd label {
+      display: grid; gap: 6px;
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.03em; color: rgba(20,25,22,0.45);
+    }
+    .drawer-bd input, .drawer-bd textarea, .drawer-bd select {
+      width: 100%; border: 1px solid rgba(20,25,22,0.12);
+      border-radius: 12px; background: #fff;
+      padding: 12px 14px; font-size: 0.92rem; color: var(--paper-ink);
+    }
+    .drawer-bd textarea { min-height: 88px; resize: vertical; line-height: 1.55; }
+    .drawer-ft {
+      padding: 16px 24px 24px;
+      border-top: 1px solid rgba(20,25,22,0.08);
+    }
+    .drawer-ft .btn-done {
+      width: 100%; height: 48px; border-radius: 14px;
+      background: var(--paper-ink); color: var(--paper);
+      font-weight: 600; font-size: 0.92rem;
+    }
+    .drawer-ft .btn-done:hover { filter: brightness(1.1); }
+
+    /* Toast / stamp */
+    .toast {
+      position: fixed; top: 20px; right: 20px; z-index: 80;
+      background: var(--paper); color: var(--paper-ink);
+      padding: 12px 16px; border-radius: 12px; font-size: 0.88rem; font-weight: 500;
+      opacity: 0; transform: translateY(-8px);
+      transition: 0.25s; pointer-events: none;
+      box-shadow: 0 16px 40px -16px rgba(0,0,0,0.5);
+    }
+    .toast.show { opacity: 1; transform: none; }
+    .stamp {
+      position: fixed; inset: 0; z-index: 70;
+      display: grid; place-items: center;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .stamp.show { opacity: 1; pointer-events: auto; }
+    .stamp-mark {
+      width: 230px; height: 230px; border-radius: 50%;
+      border: 5px double var(--flame);
+      color: var(--flame);
+      display: grid; place-items: center; text-align: center;
+      background: radial-gradient(circle, #faf6ee, #f0e8d8);
+      font-family: var(--serif); font-size: 1.8rem; font-weight: 700;
+      transform: scale(1.45) rotate(-14deg); opacity: 0;
+      box-shadow: 0 0 0 14px rgba(255,106,53,0.12), 0 40px 80px -20px rgba(0,0,0,0.5);
+      transition: transform 0.42s cubic-bezier(0.15, 1.45, 0.35, 1), opacity 0.25s;
+    }
+    .stamp.show .stamp-mark { transform: scale(1) rotate(-8deg); opacity: 1; }
+    .stamp-mark span {
+      display: block; margin-top: 6px;
+      font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.18em;
+      color: rgba(20,25,22,0.4); font-weight: 500;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage" id="root" data-status="conditional_go">
+    <nav class="nav">
+      <div class="nav-brand">
+        <span class="nav-mark" aria-hidden="true"></span>
+        启物
+      </div>
+      <div class="nav-meta">Decision Room · NestKettle</div>
+    </nav>
+
+    <header class="opening">
+      <div>
+        <p class="kicker">Campaign Decision Room</p>
+        <h1>先钉死路线<span>再让世界看见</span></h1>
+        <p class="lede">这不是表单。这是立项前的最后一次审阅——选路线、读提案、盖章发布概念页。</p>
+      </div>
+      <div class="orb" aria-label="就绪分">
+        <div class="orb-dash"></div>
+        <div class="orb-ring"></div>
+        <div class="orb-core">
+          <div class="orb-num"><span id="scoreNum">72</span><small>可信度 / 100</small></div>
+          <div class="orb-label" id="statusLabel">有条件可发</div>
+          <div class="orb-mode" id="modeLabel">demo · 概念验证</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="share" id="shareBar">
+      <div>
+        <strong>概念页已发布</strong>
+        · <span id="pubModeLabel">demo</span>
+        · <span class="path" id="pubPath">/campaign/nestkettle-concept</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button type="button" class="btn-ghost-mini" id="copyLinkBtn">复制链接</button>
+        <a class="btn-mini" id="openPubLink" href="#published">打开公开页</a>
+      </div>
+    </div>
+
+    <!-- Routes as gallery -->
+    <div class="sec-label">
+      <h2>选一条路，或几条合在一起</h2>
+      <span class="n">01 · Directions</span>
+    </div>
+    <div class="routes" id="routes" role="group" aria-label="候选路线"></div>
+    <div class="synth">
+      <input id="synthInstruction" type="text"
+        value="以 A 的定价与交付为主，吸收 B 的审美叙事"
+        placeholder="怎么合成？例如：A 的价格 + B 的气质" />
+      <button type="button" class="btn-go" id="synthBtn">合成提案</button>
+    </div>
+
+    <!-- The brief -->
+    <div class="sec-label">
+      <h2>读这份提案</h2>
+      <span class="n">02 · Foundation Brief</span>
+    </div>
+    <div class="brief-wrap">
+      <article class="brief" id="brief">
+        <div class="brief-hero">
+          <p class="ph">Composed foundation</p>
+          <h3 id="briefName">NestKettle</h3>
+          <p class="tagline" id="briefTagline">水应该干净、快、且不占地方。</p>
+          <div class="brief-meta">
+            <span class="pill" id="briefCat">便携电热水壶</span>
+            <span class="pill">早鸟 <strong id="briefEarly">¥199</strong></span>
+            <span class="pill">众筹 <strong id="briefCampaign">¥249</strong></span>
+            <span class="pill">阶段 <strong id="briefStage">原型</strong></span>
+          </div>
+        </div>
+        <div class="brief-body" id="locks"></div>
+      </article>
+
+      <aside class="side">
+        <div class="side-card blockers">
+          <h3>阻塞</h3>
+          <ul id="blockerList"></ul>
+        </div>
+        <div class="side-card next">
+          <h3>下一步</h3>
+          <ul id="nextList"></ul>
+        </div>
+        <div class="side-card">
+          <h3>视觉色板</h3>
+          <div class="palette" id="palette"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="dock">
+    <div class="dock-inner">
+      <div class="dock-stat">
+        <strong id="dockScore">72</strong>
+        <span id="dockStatus">有条件可发 · demo</span>
+      </div>
+      <div class="dock-actions">
+        <button type="button" class="btn-quiet" id="saveBtn">仅保存</button>
+        <button type="button" class="btn-seal" id="publishBtn">批准并发布概念页</button>
+      </div>
+    </div>
+  </footer>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-hd">
+      <div>
+        <p class="who" id="drawerWho">Decision</p>
+        <h3 id="drawerTitle">编辑</h3>
+      </div>
+      <button type="button" class="drawer-x" id="drawerClose" aria-label="关闭">×</button>
+    </div>
+    <div class="drawer-bd" id="drawerBody"></div>
+    <div class="drawer-ft">
+      <button type="button" class="btn-done" id="drawerDone">写回提案</button>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast" role="status"></div>
+  <div class="stamp" id="stamp">
+    <div class="stamp-mark">已批准<span>CONCEPT · DEMO</span></div>
+  </div>
+
+  <script>
+    const directions = [
+      {
+        id: "route-a", code: "A", title: "高转化实用型",
+        archetype: "问题解决 · 价格清晰",
+        thesis: "折叠后塞进背包，出差或露营三分钟烧开水。功能少而硬，早鸟定价打穿犹豫。",
+        meters: 5,
+      },
+      {
+        id: "route-b", code: "B", title: "品牌审美型",
+        archetype: "器物感 · 生活方式",
+        thesis: "桌面器物美学与哑光金属质感。卖的是随身仪式，而不是参数表。",
+        meters: 4,
+      },
+      {
+        id: "route-c", code: "C", title: "社群共创型",
+        archetype: "共创 · 迭代透明",
+        thesis: "开放规格讨论与颜色投票，把支持者变成共创者，适合长周期造势。",
+        meters: 3,
+      },
+    ];
+
+    const stageLabel = { concept: "概念", prototype: "原型", pilot: "小批", ready: "可量产" };
+    const supplierLabel = { none: "未接触", talking: "洽谈中", quoted: "已报价", locked: "已锁定" };
+
+    const state = {
+      selected: new Set(["route-a"]),
+      published: false,
+      product: {
+        workingName: "NestKettle",
+        category: "便携电热水壶",
+        launchVersion: "Launch v1 · 折叠机身",
+        variants: "曜石黑 / 雾灰",
+        launchFeatures: "折叠机身、双电压、干烧保护、食品级内胆",
+        excludedFeatures: "App 互联、保温长续航、多档温度预设",
+      },
+      audience: {
+        primarySegment: "25–40 岁差旅与轻户外用户",
+        coreSituation: "酒店或营地需要快速烧水，行李空间有限",
+        currentAlternative: "酒店壶的卫生顾虑 / 重型便携壶",
+        purchaseMotivation: "干净可控，并且真的塞得进包",
+      },
+      story: {
+        type: "问题解决叙事",
+        mood: "冷静器物 · 旅途秩序",
+        thesis: "水应该干净、快、且不占地方。NestKettle 是差旅的最小烧水单元。",
+        palette: "#252B29 #F1EFE8 #D96A3D #477E78",
+      },
+      offer: {
+        currency: "CNY",
+        early: 199,
+        campaign: 249,
+        retail: 329,
+        tiers: "早鸟单壶 199 · 双壶套装 369 · 零售参考 329",
+      },
+      evidence: [
+        { id: "e1", label: "折叠结构爆炸图", status: "available", truthClass: "cad", approved: true },
+        { id: "e2", label: "手板烧水视频", status: "available", truthClass: "prototype", approved: false },
+        { id: "e3", label: "电气安全报告", status: "needed", truthClass: "data", approved: false },
+        { id: "e4", label: "供应商报价单", status: "available", truthClass: "production", approved: true },
+      ],
+      delivery: {
+        productStage: "prototype",
+        supplierStatus: "quoted",
+        cost: 86,
+        moq: 1000,
+        fulfillmentPlan: "T+45 日发货；先国内仓后跨境",
+        openRisks: "铰链寿命未做 5k 循环；认证排期不确定",
+      },
+    };
+
+    const locksMeta = [
+      { id: "product", who: "Product", title: "产品版本", idx: "01" },
+      { id: "audience", who: "Audience", title: "核心用户", idx: "02" },
+      { id: "story", who: "Story", title: "众筹故事", idx: "03" },
+      { id: "offer", who: "Offer", title: "价格与档位", idx: "04" },
+      { id: "evidence", who: "Evidence", title: "信任证明", idx: "05" },
+      { id: "delivery", who: "Delivery", title: "可交付性", idx: "06" },
+    ];
+
+    function toast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => el.classList.remove("show"), 2200);
+    }
+
+    function money(n) {
+      return state.offer.currency === "USD" ? `$${n}` : `¥${n}`;
+    }
+
+    function summaryOf(id) {
+      switch (id) {
+        case "product":
+          return `<em>${state.product.workingName}</em> · ${state.product.launchVersion}。发布：${state.product.launchFeatures}。不做：${state.product.excludedFeatures}。`;
+        case "audience":
+          return `<em>${state.audience.primarySegment}</em>，在「${state.audience.coreSituation}」时购买。替代：${state.audience.currentAlternative}。`;
+        case "story":
+          return `<em>${state.story.type}</em> · ${state.story.mood}。<br/>「${state.story.thesis}」`;
+        case "offer":
+          return `早鸟 <em>${money(state.offer.early)}</em> · 众筹 <em>${money(state.offer.campaign)}</em> · 零售 ${money(state.offer.retail)}。<br/>${state.offer.tiers}`;
+        case "evidence":
+          return null; // special
+        case "delivery":
+          return `阶段 <em>${stageLabel[state.delivery.productStage]}</em> · 供应商 <em>${supplierLabel[state.delivery.supplierStatus]}</em> · 成本 ¥${state.delivery.cost} / MOQ ${state.delivery.moq}。<br/>${state.delivery.fulfillmentPlan}`;
+      }
+    }
+
+    function evidenceHTML() {
+      return `<div class="ev-row">${state.evidence.map((e) => {
+        const cls = e.approved ? "ok" : e.status === "needed" ? "miss" : "wait";
+        const truth = { cad: "CAD", prototype: "原型", data: "数据", production: "生产", concept: "概念", sample: "样品" }[e.truthClass] || e.truthClass;
+        return `<span class="ev-chip ${cls}">
+          <i class="dot"></i>
+          ${e.label}
+          <span style="opacity:.45;font-family:var(--mono);font-size:10px">${truth}</span>
+          <button type="button" data-ev="${e.id}">${e.approved ? "撤销" : "批准"}</button>
+        </span>`;
+      }).join("")}</div>`;
+    }
+
+    function renderRoutes() {
+      document.getElementById("routes").innerHTML = directions.map((d) => {
+        const on = state.selected.has(d.id);
+        const meters = Array.from({ length: 5 }, (_, i) =>
+          `<span class="${i < d.meters ? "on" : ""}"></span>`
+        ).join("");
+        return `
+          <button type="button" class="route ${d.id}" data-id="${d.id}" aria-pressed="${on}">
+            <div class="route-head">
+              <span class="route-code">${d.code}</span>
+              <span class="route-check" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2L4.8 8.5L9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+            <div class="route-title">${d.title}</div>
+            <div class="route-arch">${d.archetype}</div>
+            <p class="route-thesis">${d.thesis}</p>
+            <div class="route-meters">${meters}</div>
+          </button>`;
+      }).join("");
+
+      document.querySelectorAll(".route").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.dataset.id;
+          if (state.selected.has(id)) {
+            if (state.selected.size === 1) return toast("至少保留一条路线");
+            state.selected.delete(id);
+          } else state.selected.add(id);
+          renderRoutes();
+          evaluate();
+        });
+      });
+    }
+
+    function renderBrief() {
+      document.getElementById("briefName").textContent = state.product.workingName;
+      document.getElementById("briefTagline").textContent = state.story.thesis.split("。")[0] + "。";
+      document.getElementById("briefCat").textContent = state.product.category;
+      document.getElementById("briefEarly").textContent = money(state.offer.early);
+      document.getElementById("briefCampaign").textContent = money(state.offer.campaign);
+      document.getElementById("briefStage").textContent = stageLabel[state.delivery.productStage];
+
+      document.getElementById("locks").innerHTML = locksMeta.map((l) => {
+        if (l.id === "evidence") {
+          return `
+            <button type="button" class="lock" data-lock="${l.id}">
+              <span class="idx">${l.idx}</span>
+              <div>
+                <div class="who">${l.who}</div>
+                <h4>${l.title}</h4>
+                <div class="summary">每条证据都有 truthClass。生成概念 ≠ 性能证明。</div>
+                ${evidenceHTML()}
+              </div>
+              <span class="edit-hint">调整</span>
+            </button>`;
+        }
+        return `
+          <button type="button" class="lock" data-lock="${l.id}">
+            <span class="idx">${l.idx}</span>
+            <div>
+              <div class="who">${l.who}</div>
+              <h4>${l.title}</h4>
+              <div class="summary">${summaryOf(l.id)}</div>
+            </div>
+            <span class="edit-hint">调整</span>
+          </button>`;
+      }).join("");
+
+      document.querySelectorAll(".lock").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          if (e.target.closest("[data-ev]")) return;
+          openDrawer(btn.dataset.lock);
+        });
+      });
+      document.querySelectorAll("[data-ev]").forEach((b) => {
+        b.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const item = state.evidence.find((x) => x.id === b.dataset.ev);
+          if (!item) return;
+          if (item.status === "needed") return toast("尚无材料，先登记证据");
+          item.approved = !item.approved;
+          renderBrief();
+          evaluate();
+          toast(item.approved ? "证据已批准" : "已撤销");
+        });
+      });
+
+      const colors = state.story.palette.split(/\s+/).filter(Boolean);
+      document.getElementById("palette").innerHTML = colors
+        .map((c) => `<i style="background:${c}" title="${c}"></i>`)
+        .join("");
+    }
+
+    function fieldsFor(id) {
+      const map = {
+        product: [
+          ["workingName", "工作名"], ["category", "品类"],
+          ["launchVersion", "上市版本"], ["variants", "规格"],
+          ["launchFeatures", "发布功能", "ta"], ["excludedFeatures", "明确不做", "ta"],
+        ],
+        audience: [
+          ["primarySegment", "主人群"], ["coreSituation", "核心情境"],
+          ["currentAlternative", "当前替代"], ["purchaseMotivation", "购买动机", "ta"],
+        ],
+        story: [
+          ["type", "故事类型"], ["mood", "视觉气质"],
+          ["thesis", "核心 thesis", "ta"], ["palette", "色板 hex"],
+        ],
+        offer: [
+          ["currency", "货币", "sel", ["CNY", "USD"]],
+          ["early", "早鸟价", "num"], ["campaign", "众筹价", "num"],
+          ["retail", "零售参考", "num"], ["tiers", "档位摘要", "ta"],
+        ],
+        delivery: [
+          ["productStage", "产品阶段", "sel", ["concept", "prototype", "pilot", "ready"]],
+          ["supplierStatus", "供应商", "sel", ["none", "talking", "quoted", "locked"]],
+          ["cost", "目标成本", "num"], ["moq", "MOQ", "num"],
+          ["fulfillmentPlan", "履约计划", "ta"], ["openRisks", "开放风险", "ta"],
+        ],
+        evidence: null,
+      };
+      return map[id];
+    }
+
+    let drawerLock = null;
+
+    function openDrawer(id) {
+      drawerLock = id;
+      const meta = locksMeta.find((l) => l.id === id);
+      document.getElementById("drawerWho").textContent = meta.who;
+      document.getElementById("drawerTitle").textContent = meta.title;
+
+      const body = document.getElementById("drawerBody");
+      if (id === "evidence") {
+        body.innerHTML = state.evidence.map((e) => `
+          <div style="padding:12px 14px;border:1px solid rgba(20,25,22,.1);border-radius:12px;background:#fff">
+            <div style="font-weight:600;margin-bottom:4px">${e.label}</div>
+            <div style="font-size:0.78rem;color:rgba(20,25,22,.45);margin-bottom:8px">${e.truthClass} · ${e.status}</div>
+            <button type="button" data-ev-d="${e.id}" style="font-size:0.82rem;text-decoration:underline;color:var(--flame)">
+              ${e.approved ? "撤销批准" : "批准此条"}
+            </button>
+          </div>
+        `).join("");
+        body.querySelectorAll("[data-ev-d]").forEach((b) => {
+          b.addEventListener("click", () => {
+            const item = state.evidence.find((x) => x.id === b.dataset.evD);
+            if (item.status === "needed") return toast("尚无材料");
+            item.approved = !item.approved;
+            openDrawer("evidence");
+            renderBrief();
+            evaluate();
+          });
+        });
+      } else {
+        const fields = fieldsFor(id);
+        const src = state[id];
+        body.innerHTML = fields.map(([key, label, type, opts]) => {
+          if (type === "ta") {
+            return `<label>${label}<textarea data-k="${key}">${src[key] ?? ""}</textarea></label>`;
+          }
+          if (type === "sel") {
+            const labels = id === "delivery" && key === "productStage" ? stageLabel
+              : id === "delivery" && key === "supplierStatus" ? supplierLabel
+              : null;
+            return `<label>${label}<select data-k="${key}">${opts.map((o) =>
+              `<option value="${o}" ${src[key] === o ? "selected" : ""}>${labels ? labels[o] : o}</option>`
+            ).join("")}</select></label>`;
+          }
+          return `<label>${label}<input data-k="${key}" type="${type === "num" ? "number" : "text"}" value="${src[key] ?? ""}" /></label>`;
+        }).join("");
+      }
+
+      document.getElementById("drawer").classList.add("open");
+      document.getElementById("drawer").setAttribute("aria-hidden", "false");
+      document.getElementById("scrim").classList.add("open");
+    }
+
+    function closeDrawer() {
+      if (drawerLock && drawerLock !== "evidence") {
+        const src = state[drawerLock];
+        document.querySelectorAll("#drawerBody [data-k]").forEach((el) => {
+          src[el.dataset.k] = el.type === "number" ? Number(el.value || 0) : el.value;
+        });
+      }
+      document.getElementById("drawer").classList.remove("open");
+      document.getElementById("drawer").setAttribute("aria-hidden", "true");
+      document.getElementById("scrim").classList.remove("open");
+      renderBrief();
+      evaluate();
+      drawerLock = null;
+    }
+
+    function hasText(v) { return String(v ?? "").trim().length > 0; }
+
+    function evaluate() {
+      const blockers = [];
+      const next = [];
+      if (!state.selected.size) blockers.push("未选择候选路线");
+      if (!hasText(state.product.workingName) || !hasText(state.product.category)) blockers.push("产品名称或品类未锁定");
+      if (!hasText(state.audience.primarySegment)) blockers.push("核心用户未锁定");
+      if (!hasText(state.story.thesis)) blockers.push("故事 thesis 为空");
+      if (!state.offer.early || !state.offer.campaign) blockers.push("价格三角不完整");
+      if (state.delivery.productStage === "concept") blockers.push("仍停留在概念阶段");
+      if (state.delivery.supplierStatus === "none") blockers.push("供应商未接触");
+
+      const physical = state.evidence.filter((e) =>
+        ["prototype", "sample", "production", "data"].includes(e.truthClass) && e.approved
+      );
+      const gaps = state.evidence.filter((e) => e.status === "needed");
+
+      let score = 42;
+      score += Math.min(12, state.selected.size * 5);
+      if (hasText(state.product.launchFeatures)) score += 6;
+      if (hasText(state.story.thesis)) score += 8;
+      if (state.offer.early && state.offer.campaign && state.offer.retail) score += 8;
+      score += Math.min(12, physical.length * 6);
+      if (["quoted", "locked"].includes(state.delivery.supplierStatus)) score += 8;
+      if (["prototype", "pilot", "ready"].includes(state.delivery.productStage)) score += 6;
+      score = Math.max(0, Math.min(100, score - blockers.length * 8));
+
+      let status = "conditional_go", mode = "demo";
+      if (blockers.length) {
+        status = "blocked";
+      } else if (
+        state.delivery.productStage === "ready" &&
+        state.delivery.supplierStatus === "locked" &&
+        physical.length >= 2 &&
+        !gaps.length
+      ) {
+        status = "go";
+        mode = "live";
+        score = Math.max(score, 88);
+      } else {
+        if (!physical.length) next.push("批准至少一条原型 / 生产类证据");
+        if (gaps.length) next.push("补齐：" + gaps.map((e) => e.label).join("、"));
+        if (state.delivery.supplierStatus !== "locked") next.push("推进供应商锁定");
+        if (state.delivery.productStage === "prototype") next.push("铰链寿命或认证排期");
+        if (!next.length) next.push("先发 demo，收意向后再冲 live");
+      }
+      if (status === "go") next.push("准备正式版文案与履约 SLA");
+
+      const root = document.getElementById("root");
+      root.dataset.status = status;
+      document.getElementById("scoreNum").textContent = score;
+      document.getElementById("dockScore").textContent = score;
+
+      const sm = { go: "可正式发布", conditional_go: "有条件可发", blocked: "暂不可发" };
+      const mm = { demo: "demo · 概念验证", live: "live · 正式发布" };
+      document.getElementById("statusLabel").textContent = sm[status];
+      document.getElementById("modeLabel").textContent = mm[mode];
+      document.getElementById("dockStatus").textContent = `${sm[status]} · ${mode}`;
+
+      document.getElementById("blockerList").innerHTML = blockers.length
+        ? blockers.map((b) => `<li>${b}</li>`).join("")
+        : `<p class="empty">无阻塞</p>`;
+      document.getElementById("nextList").innerHTML = next.map((n) => `<li>${n}</li>`).join("");
+
+      const pub = document.getElementById("publishBtn");
+      pub.disabled = status === "blocked";
+      pub.textContent = state.published ? "更新并重新发布" : "批准并发布概念页";
+      state._eval = { status, mode, score };
+    }
+
+    function synthesize() {
+      const ids = [...state.selected];
+      if (!ids.length) return toast("先选路线");
+      const instruction = document.getElementById("synthInstruction").value;
+      const absorbB = ids.includes("route-b") || /审美|视觉|品牌/.test(instruction);
+      const absorbC = ids.includes("route-c") || /社群|共创/.test(instruction);
+
+      if (ids.includes("route-a")) {
+        state.offer.early = 199; state.offer.campaign = 249; state.offer.retail = 329;
+        state.product.launchFeatures = "折叠机身、双电压、干烧保护、食品级内胆";
+        state.delivery.productStage = "prototype";
+        state.delivery.supplierStatus = "quoted";
+      }
+      if (absorbB) {
+        state.story.type = "器物生活方式";
+        state.story.mood = "哑光金属 · 桌面静物";
+        state.story.thesis = "把烧水从「凑合」变成随身仪式。NestKettle 用冷静器物感，服务在路上的人。";
+      } else {
+        state.story.type = "问题解决叙事";
+        state.story.mood = "冷静器物 · 旅途秩序";
+        state.story.thesis = "水应该干净、快、且不占地方。NestKettle 是差旅的最小烧水单元。";
+      }
+      if (absorbC) {
+        state.audience.purchaseMotivation = "参与规格共创与颜色投票，成为第一批定义产品的人";
+      }
+      renderBrief();
+      evaluate();
+      toast("提案已合成");
+    }
+
+    function publish() {
+      if (!state._eval || state._eval.status === "blocked") return toast("仍有阻塞");
+      const stamp = document.getElementById("stamp");
+      stamp.querySelector(".stamp-mark").innerHTML =
+        state._eval.mode === "live" ? "已批准<span>LIVE</span>" : "已批准<span>CONCEPT · DEMO</span>";
+      stamp.classList.add("show");
+      setTimeout(() => {
+        stamp.classList.remove("show");
+        state.published = true;
+        document.getElementById("shareBar").classList.add("show");
+        document.getElementById("pubModeLabel").textContent = state._eval.mode;
+        evaluate();
+        toast(state._eval.mode === "live" ? "正式版已发布" : "概念验证页已发布（意向不收费）");
+      }, 750);
+    }
+
+    renderRoutes();
+    renderBrief();
+    evaluate();
+
+    document.getElementById("synthBtn").addEventListener("click", synthesize);
+    document.getElementById("saveBtn").addEventListener("click", () => toast("草稿已保存"));
+    document.getElementById("publishBtn").addEventListener("click", publish);
+    document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+    document.getElementById("drawerDone").addEventListener("click", closeDrawer);
+    document.getElementById("scrim").addEventListener("click", closeDrawer);
+    document.getElementById("stamp").addEventListener("click", () => document.getElementById("stamp").classList.remove("show"));
+    document.getElementById("copyLinkBtn").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText("https://qiwu.example/campaign/nestkettle-concept");
+        toast("链接已复制");
+      } catch { toast("请手动复制路径"); }
+    });
+  </script>
+</body>
+</html>

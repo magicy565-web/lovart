@@ -1,0 +1,41 @@
+# v0 sandbox internal files
+__v0_runtime_loader.js
+__v0_devtools.tsx
+__v0_jsx-dev-runtime.ts
+.snowflake/
+.v0-trash/
+.vercel/
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies & build
+node_modules/
+.pnpm-store/
+.next/
+.next-*/
+*.tsbuildinfo
+.turbo/
+
+# Logs & local runtime
+*.log
+.dev-server*
+
+# Design screenshots / scratch
+.v0-*.png
+/--full-page
+.git-write-test
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+contracts.ts.new
+
+# Local GitHub handoff artifacts
+/PUSH_TO_GITHUB.md
+/lovart-main-concept-validation.bundle
+/lovart-main-source.tar.gz
